@@ -1,12 +1,16 @@
-// ===== CONFIGURAÇÃO DO MODO PRO — edite só este arquivo =====
+// ===== CONFIGURAÇÃO — DigitaHinos Ukulele =====
+// liberarTudo: true  -> app 100% grátis: todos os hinos completos e PDF da tablatura liberados,
+//                       botão Pro oculto e nenhuma ligação com servidor de ativação.
+// Para voltar ao modo Pro no futuro: coloque liberarTudo: false e preencha os dados abaixo.
 window.PRO_CFG = {
-  app: 'ukulele',                                  // nome do app (aparece na planilha)
-  scriptUrl: 'https://script.google.com/macros/s/AKfycbxRXEg3fvpr2TrD_YpG3ntdJiect5irk5brD52sNsdMQQTJdkbqGZMglVif0fWtx5OE/exec',
-  pixKey: 'meuidwp@duck.com',                   // chave Pix (e-mail)
-  pixName: 'WESLEY PHILIP A CAPUCHO',           // nome do recebedor (até 25 letras, sem acento)
-  pixCity: 'SAO SEBASTIAO',                     // cidade (até 15 letras, sem acento)
-  price: 19.90,                                 // valor em reais
-  whatsapp: '5512974087661',                    // WhatsApp (com 55 + DDD) para receber o comprovante
-  freeHinos: 5,                                 // hinos 1 a N completos no modo grátis
-  previewSec: 15                                // segundos de prévia nos demais hinos
+  liberarTudo: true,
+  app: 'digitahinos-ukulele',
+  scriptUrl: '',
+  pixKey: '',
+  pixName: '',
+  pixCity: '',
+  price: 0,
+  whatsapp: '',
+  freeHinos: 5,
+  previewSec: 15
 };

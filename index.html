@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Ukulele Bounce - Visualizador MIDI</title>
+    <title>DigitaHinos Ukulele</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
@@ -642,7 +642,7 @@ body.light #tmPage .ch-cell span{color:#8a5a00;}
         <svg viewBox="0 0 32 32" fill="none">
             <rect x="2" y="2" width="28" height="28" rx="8" fill="url(#lg)"/><rect x="14.9" y="5" width="2.2" height="10" rx=".8" fill="#fff"/><rect x="13.6" y="2.8" width="4.8" height="4.4" rx="1.2" fill="#fff"/><ellipse cx="16" cy="17" rx="4" ry="3.4" fill="#fff"/><ellipse cx="16" cy="22.6" rx="5.6" ry="4.8" fill="#fff"/><circle cx="16" cy="21.4" r="1.6" fill="#1a95ad"/><line x1="15.4" y1="7" x2="15.4" y2="26" stroke="#1a95ad" stroke-width=".35"/><line x1="16.6" y1="7" x2="16.6" y2="26" stroke="#1a95ad" stroke-width=".35"/><defs><linearGradient id="lg" x1="0" y1="0" x2="32" y2="32"><stop stop-color="#5fd8e8"/><stop offset="1" stop-color="#1a95ad"/></linearGradient></defs>
         </svg>
-        <span class="logo-name">Ukulele Bounce</span>
+        <span class="logo-name">DigitaHinos Ukulele</span>
         <span class="note-count-badge" id="noteCountBadge" style="display:none">0 notas</span>
     </div>
     <div class="header-right">
@@ -681,7 +681,7 @@ body.light #tmPage .ch-cell span{color:#8a5a00;}
                     <line x1="57.5" y1="26" x2="57.5" y2="100" stroke="#0b4d5c" stroke-width="1.4"/><line x1="62.5" y1="26" x2="62.5" y2="100" stroke="#0b4d5c" stroke-width="1.4"/>
                     <defs><linearGradient id="wg" x1="0" y1="0" x2="120" y2="120"><stop stop-color="#5fd8e8"/><stop offset="1" stop-color="#1a95ad"/></linearGradient></defs>
                 </svg>
-                <h1>Ukulele Bounce</h1>
+                <h1>DigitaHinos Ukulele</h1>
                 <p>Carregue um arquivo MIDI ou MusicXML (.mxl/.xml) ou crie sua própria partitura</p>
                 <div class="welcome-btns">
                     <label class="welcome-upload" for="welcomeFileInput">Carregar partitura
@@ -1924,7 +1924,7 @@ function loadMidiFile(file){
 // Grátis: todos os hinos, mas só PRO_CFG.previewSec s de reprodução (qualquer voz); hinos 1..freeHinos completos.
 // Pro: tudo liberado, ativado com um código de uso único (1 código = 1 aparelho) validado numa planilha Google (Apps Script).
 const PRO_CFG=window.PRO_CFG||{app:'app',scriptUrl:'',pixKey:'',pixName:'',pixCity:'',price:0,whatsapp:'',freeHinos:5,previewSec:15};
-const PRO={ok:false,code:'',dev:'',last:0,native:false,devId:''};
+const PRO={ok:!!PRO_CFG.liberarTudo,code:'',dev:'',last:0,native:false,devId:''};
 function proSave(){ try{ if(PRO.ok) localStorage.setItem('proState',JSON.stringify({code:PRO.code,dev:PRO.dev,last:PRO.last})); else localStorage.removeItem('proState'); }catch(e){} }
 function proLoad(){ try{ const s=JSON.parse(localStorage.getItem('proState')||'null'); if(s&&s.code){ PRO.ok=true; PRO.code=s.code; PRO.dev=s.dev||''; PRO.last=s.last||0; } }catch(e){} }
 async function proSha(txt){
@@ -1964,6 +1964,7 @@ async function proActivate(raw){
     return {ok:false,msg:PRO_MSG[r&&r.erro]||'Não foi possível ativar.'};
 }
 async function proInit(){
+    if(PRO_CFG.liberarTudo){ proRefresh(); return; }   // app 100% grátis: sem ativação, sem servidor
     proLoad(); proRefresh();
     try{
         const dev=await proDevice();
@@ -2001,7 +2002,7 @@ function proPixPayload(){
 }
 // ---- interface ----
 function proRefresh(){
-    const b=document.getElementById('proBtn'); if(b){ b.textContent=PRO.ok?'✓ Pro':'⭐ Pro'; b.classList.toggle('pro-on',PRO.ok); }
+    const b=document.getElementById('proBtn'); if(b){ b.textContent=PRO.ok?'✓ Pro':'⭐ Pro'; b.classList.toggle('pro-on',PRO.ok); if(PRO_CFG.liberarTudo) b.style.display='none'; }
     const pb=document.getElementById('vgPdfBtn'); if(pb) pb.textContent=PRO.ok?'📄 PDF':'🔒 PDF';
     try{ if(typeof renderHinos==='function'&&!document.getElementById('mHinos').hidden) renderHinos(); }catch(e){}
     try{ updateUI(); }catch(e){}
@@ -2900,7 +2901,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     const tsel=document.createElement('select'); tsel.id='vgTun'; tsel.className='vgTunSel'; tsel.setAttribute('aria-label','Afinação do ukulele'); tsel.title='Afinação do ukulele'; tsel.style.cssText=sty+';max-width:48%';
     Object.entries(TUNINGS).forEach(([k,v])=>{ const o=document.createElement('option'); o.value=k; o.textContent=v.n; tsel.appendChild(o); });
     tsel.value=TUN_KEY; tsel.addEventListener('change',()=>window.vbSetTuning(tsel.value));
-    const bp=mk('vgPdfBtn','🔒 PDF','Baixar o PDF da tablatura desta versão (exclusivo do modo Pro)');
+    const bp=mk('vgPdfBtn',(PRO.ok?'📄 PDF':'🔒 PDF'),'Baixar o PDF da tablatura desta versão');
     bp.onclick=()=>{ if(!PRO.ok){ proPaywall('pdf'); return; } if(window.vbExportPdf) window.vbExportPdf(); };
     bar.style.flexWrap='wrap'; bar.style.justifyContent='flex-end';
     bar.append(bh,bz,bp,tsel,sel); box.appendChild(bar); paint(); try{ proRefresh(); }catch(e){}
@@ -3944,7 +3945,7 @@ function exportMidi(){
     const all=[...header];
     tracks.forEach(td=>{ const tl=td.length; all.push(0x4D,0x54,0x72,0x6B,(tl>>24)&0xFF,(tl>>16)&0xFF,(tl>>8)&0xFF,tl&0xFF,...td); });
     const url=URL.createObjectURL(new Blob([new Uint8Array(all)],{type:'audio/midi'}));
-    const a=document.createElement('a'); a.href=url; a.download=(window.pbFileBase?window.pbFileBase():'ukulelebounce')+'.mid'; a.click();
+    const a=document.createElement('a'); a.href=url; a.download=(window.pbFileBase?window.pbFileBase():'digitahinos-ukulele')+'.mid'; a.click();
     URL.revokeObjectURL(url);
     toast('MIDI exportado ('+voiceIds.length+' vozes)!','success');
 }
@@ -4279,7 +4280,7 @@ function pbBuildScore(opts){
     });
     const total_pages=svgs.length;
     svgs.forEach((s,i)=>pbEl(s,'text',{x:W/2,y:H-26,'text-anchor':'middle','font-family':'Arial,Helvetica,sans-serif','font-size':11,fill:'#888'},(i+1)+' / '+total_pages));
-    pbEl(svgs[0],'text',{x:W-MX,y:120,'text-anchor':'end','font-family':'Arial,Helvetica,sans-serif','font-size':11,'fill':'#888'},ts+'  ·  '+TUNINGS[TUN_KEY].n+'  ·  Ukulele Bounce');
+    pbEl(svgs[0],'text',{x:W-MX,y:120,'text-anchor':'end','font-family':'Arial,Helvetica,sans-serif','font-size':11,'fill':'#888'},ts+'  ·  '+TUNINGS[TUN_KEY].n+'  ·  DigitaHinos Ukulele');
 
     const INK='#111', HRX=SP*0.66, HRY=SP*0.46;
     const pending=staves.map(()=>new Map());
@@ -4527,8 +4528,8 @@ function pbTrebleClef(g,x,yG,SP){
 'use strict';
 const $=id=>document.getElementById(id);
 let projName='Sem título', current=null;      // current: {kind:'library',id} | {kind:'folder',file}
-const safeName=s=>(s||'ukulelebounce').replace(/[\\/:*?"<>|]+/g,'_').replace(/\s+/g,' ').trim().slice(0,80)||'ukulelebounce';
-window.pbFileBase=()=>safeName(projName==='Sem título'?'ukulelebounce':projName);
+const safeName=s=>(s||'digitahinos-ukulele').replace(/[\\/:*?"<>|]+/g,'_').replace(/\s+/g,' ').trim().slice(0,80)||'digitahinos-ukulele';
+window.pbFileBase=()=>safeName(projName==='Sem título'?'digitahinos-ukulele':projName);
 const say=(t,ok)=>toast(t,ok?'success':'error');
 function download(name,blob){
     const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name;
@@ -4677,7 +4678,7 @@ async function refreshFolder(){
         }
     }catch(e){ ul.append(emptyLi('Não foi possível ler a pasta')); return; }
     items.sort((a,b)=>b.mod-a.mod);
-    if(!items.length){ ul.append(emptyLi('Nenhum projeto do Ukulele Bounce nesta pasta ainda')); return; }
+    if(!items.length){ ul.append(emptyLi('Nenhum projeto do DigitaHinos Ukulele nesta pasta ainda')); return; }
     items.forEach(it=>ul.append(projLi(it.name.slice(0,-FOLDER_EXT.length),fmtDate(it.mod)+' · '+Math.max(1,Math.round(it.size/1024))+' KB',
         async()=>{ try{ const f=await it.h.getFile(); const d=JSON.parse(await f.text()); apply(d);
                 projName=it.name.slice(0,-FOLDER_EXT.length); current={kind:'folder',file:it.name}; updateName(); $('projNameIn').value=projName; closeModals(); say('Projeto aberto da pasta',true); }
@@ -4837,7 +4838,7 @@ $('exWav').onclick=async()=>{
     closeModals(); busy(true);
     try{
         const r=await renderWav();
-        download(safeName(projName==='Sem título'?'ukulelebounce':projName)+'.wav',wavBlob(r.buf));
+        download(safeName(projName==='Sem título'?'digitahinos-ukulele':projName)+'.wav',wavBlob(r.buf));
         say(r.real?'WAV exportado (cordas reais)':'WAV exportado (sintetizador — as gravações não carregaram)',true);
     }catch(e){ console.error(e); say('Não foi possível gerar o WAV'); }
     busy(false);
